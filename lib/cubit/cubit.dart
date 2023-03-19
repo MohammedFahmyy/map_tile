@@ -29,14 +29,12 @@ class AppCubit extends Cubit<AppStates> {
     FirebaseFirestore.instance.collection('users').get().then((value) {
       for (var element in value.docs) {
         allusers.add(UserModel.fromJson(element.data()));
-        print(element.data());
       }
       loadingUsers = false;
       emit(AppLoadUserSuccessState());
     }).catchError((error) {
       emit(AppLoadUserErrorState(error.toString()));
       loadingUsers = false;
-      print(error);
     });
   }
 
@@ -77,14 +75,10 @@ class AppCubit extends Cubit<AppStates> {
     }
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    print("Location Done");
     Position position = await Geolocator.getCurrentPosition();
     userLat = position.latitude;
     userLng = position.longitude;
     loadingLocation = false;
-    print(userLat);
-    print(userLng);
-    print("Loading Location: ${!loadingLocation}");
     emit(AppGetPositionSuccessState());
     return position;
   }
@@ -113,8 +107,6 @@ class AppCubit extends Cubit<AppStates> {
 
   // Visibility and Logout Action Determine
   selectedItemAction(context, item) {
-    print("ok");
-    print(item);
     switch (item) {
       case "Visibility":
         changeVisibility();
