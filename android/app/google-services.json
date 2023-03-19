@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "402635277769",
+    "project_id": "map-tile-bb653",
+    "storage_bucket": "map-tile-bb653.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402635277769:android:061c969bbbfdc086945418",
+        "android_client_info": {
+          "package_name": "com.example.map_tile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402635277769-1ek01u39of0es1gi1msvbhjcd1vmqkgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.map_tile",
+            "certificate_hash": "52472e961ae207b591298bf637a09ef296e9422b"
+          }
+        },
+        {
+          "client_id": "402635277769-qcfcguhd9i1r78j8l12s52cnr1ifvkc3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBJwCYaFZwhNekU4T5iW3FkndaQnP09II"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402635277769-qcfcguhd9i1r78j8l12s52cnr1ifvkc3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "402635277769-0fu33g5hrcoiibfmk342c9jk05p0dm42.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mapTile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

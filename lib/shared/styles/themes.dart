@@ -9,13 +9,13 @@ ThemeData lightmode = ThemeData(
   ),
   scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
-    color: darkSwatch,
+    color: primarySwatch,
     elevation: 0,
     titleTextStyle: const TextStyle(
       fontSize: 25,
     ),
     systemOverlayStyle: SystemUiOverlayStyle(
-      statusBarColor: darkSwatch,
+      statusBarColor: primarySwatch,
       statusBarIconBrightness: Brightness.light,
     ),
   ),
@@ -27,7 +27,7 @@ ThemeData lightmode = ThemeData(
     selectedItemColor: Colors.purple[200],
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Colors.purple[200],
+    backgroundColor: primarySwatch,
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(
@@ -40,7 +40,7 @@ ThemeData lightmode = ThemeData(
     labelColor: Colors.white,
     labelStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
     unselectedLabelStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
-    labelPadding: EdgeInsets.only(bottom: 10),
+    labelPadding: EdgeInsets.only(bottom: 10,top:5),
     indicator: UnderlineTabIndicator(
       borderSide: BorderSide(color: Colors.white),
     ),

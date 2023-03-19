@@ -1,35 +1,89 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:map_tile/modules/download/download_page.dart';
+import 'package:map_tile/shared/constants/constants.dart';
 
-class HomeLayout extends StatelessWidget {
+import '../../cubit/cubit.dart';
+import '../../cubit/states.dart';
+
+class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
 
   @override
+  State<HomeLayout> createState() => _HomeLayoutState();
+}
+
+class _HomeLayoutState extends State<HomeLayout> {
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(onPressed: (){}, icon: const Icon(
-              Icons.more_vert_rounded
-            ))
-          ],
-          title: const Text("Map Tile"),
-          bottom: const TabBar(tabs: [
-            Text("Map"),
-            Text("Report"),
-            Text("Chats"),
-          ]),
-        ),
-        body: SizedBox(
-          height: double.maxFinite,
-          width: double.maxFinite,
-          child: FittedBox(
-          fit: BoxFit.fill,
-          child: Image.asset("assets/map.png"),
-        ),
-        )
-      ),
+    return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        var cubit = AppCubit.get(context);
+        return DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              actions: [
+                PopupMenuButton(
+                  itemBuilder: (context) => [
+                    PopupMenuItem<String>(
+                      value: "Visibility",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.visibility, color: Colors.grey),
+
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          const Text("Visibility"),
+                          const SizedBox(width: 5,),
+                          CircleAvatar(
+                            radius: 5,
+                            backgroundColor: (cubit.visibility)?Colors.green:Colors.grey,
+                          )
+                                    ],
+                      ),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: "Logout",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(Icons.logout_outlined, color: Colors.red),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Logout"),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onSelected: (value) =>
+                      cubit.selectedItemAction(context, value),
+                )
+              ],
+              title: const Text("Map Tile"),
+              bottom: TabBar(tabs: const [
+                Text("Map"),
+                Text("Report"),
+                Text("Chats"),
+              ],
+              onTap: (value) {
+                cubit.changePage(value);
+              },
+              ),
+            ),
+            body: ConditionalBuilder(
+              condition: (unarchived && downloaded),
+              fallback: (context) => const DownloadScreen(),
+              builder: (context) =>  cubit.screens[cubit.pageIndex],
+            ),
+          ),
+        );
+      },
     );
   }
 }

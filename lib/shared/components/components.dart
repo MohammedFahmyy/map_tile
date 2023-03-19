@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 navigateTo(context, widget) {
   Navigator.push(context, MaterialPageRoute(builder: ((context) => widget)));
@@ -63,19 +64,19 @@ Widget defaultTextFormField({
   );
 }
 
-// void showToast({
-//   required String message,
-//   required ToastState state,
-// }) {
-//   Fluttertoast.showToast(
-//       msg: message,
-//       toastLength: Toast.LENGTH_LONG,
-//       gravity: ToastGravity.BOTTOM,
-//       timeInSecForIosWeb: 5,
-//       backgroundColor: chooseToastColor(state),
-//       textColor: Colors.white,
-//       fontSize: 16.0);
-// }
+void showToast({
+  required String message,
+  required ToastState state,
+}) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: chooseToastColor(state),
+      textColor: Colors.white,
+      fontSize: 16.0);
+}
 
 enum ToastState { SUCCESS, ERROR, WARNING }
 

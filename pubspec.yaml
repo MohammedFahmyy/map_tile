@@ -41,6 +41,26 @@ dependencies:
   dio: ^4.0.6
   shared_preferences: ^2.0.15
   conditional_builder_null_safety: ^0.0.6
+  fluttertoast: ^8.2.1
+  intl_phone_field: ^3.1.0
+  wakelock: ^0.6.2
+  percent_indicator: ^4.2.3
+
+  #File Handlers
+  path_provider: ^2.0.13
+  permission_handler: ^10.2.0
+  archive: ^3.3.6
+
+  #Map
+  flutter_map: ^3.1.0
+  latlong2: ^0.8.1
+  geolocator: any
+
+
+  #firebase
+  firebase_core: ^2.7.0
+  firebase_auth: ^4.2.9
+  cloud_firestore: ^4.4.4
 
 dev_dependencies:
   flutter_test:
