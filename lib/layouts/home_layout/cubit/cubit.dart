@@ -16,6 +16,7 @@ class MapCubit extends Cubit<MapStates> {
 
   var markerst = <Marker>[];
 
+  // Get User Position and Ask For permission
   Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -52,20 +53,19 @@ class MapCubit extends Cubit<MapStates> {
     }
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    print("Location Done");
     emit(MapGetPositionSuccessState());
     return await Geolocator.getCurrentPosition();
   }
 
+  // Fetch Position To Database
   Future<void> userLocationUpdate({
     required BuildContext context,
     required String id,
   }) async {
+    // First Get Position
     Position position = await determinePosition();
-    print(id);
-    print(position);
-    print("check id =$id");
     emit(MapUpdateUserLoadingState());
+    // Then Upload it to Firestore
     FirebaseFirestore.instance.collection('users').doc(id).update({
       'lat': position.latitude,
       'lng': position.longitude,
@@ -74,6 +74,8 @@ class MapCubit extends Cubit<MapStates> {
     userLng = position.longitude;
     emit(MapUpdateUserSuccessState());
     addMyMarker(position.latitude, position.longitude);
+    // After Updating Position Load Users
+    // ignore: use_build_context_synchronously
     loadUsers(context);
   }
 
@@ -81,6 +83,7 @@ class MapCubit extends Cubit<MapStates> {
 
   MapController mapController = MapController();
 
+  // Function to Add User Marker to Screen 
   addMyMarker(latitude, longitude) {
     if (myMarker.isNotEmpty) {
       myMarker.clear();
@@ -114,11 +117,13 @@ class MapCubit extends Cubit<MapStates> {
     ));
   }
 
+  // Change Camera Controller
   changeCamera(lat, lng) {
     mapController.move(LatLng(lat, lng), 16);
     emit(MapCameraMoveState());
   }
 
+  // Load Users From Database & Add Markers
   Future<void> loadUsers(context) async {
     emit(MapLoadUserLoadingState());
     FirebaseFirestore.instance.collection('users').get().then((value) {
@@ -144,6 +149,8 @@ class MapCubit extends Cubit<MapStates> {
                   iconSize: 50,
                   color: Colors.black,
                   onPressed: () {
+                    // Marker On Pressed change camera to focus on user
+                    // Then Show Dialog with user info
                     changeCamera(user.lat!, user.lng!);
                     showDialog(context: context, builder: (context) => SimpleDialog(
                       title: Text(user.fname!),
@@ -176,15 +183,12 @@ class MapCubit extends Cubit<MapStates> {
             ),
           ));
         }
-        print(element.data());
       }
-      print(usersMarkers.length);
       loading = false;
       emit(MapLoadUserSuccessState());
     }).catchError((error) {
       emit(MapLoadUserErrorState(error.toString()));
       loading = false;
-      print(error);
     });
   }
 }

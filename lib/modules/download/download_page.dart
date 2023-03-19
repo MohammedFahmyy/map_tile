@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:archive/archive.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:map_tile/modules/map/map_screen.dart';
+import 'package:map_tile/shared/components/components.dart';
 import 'package:map_tile/shared/networks/local/cache_helper.dart';
 import 'package:map_tile/shared/styles/colors.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,25 +25,30 @@ class _DownloadScreenState extends State<DownloadScreen> {
   final Dio dio = Dio();
   double downloadProgress = 0.0;
   File? zippedFile;
+
+  // Function To Save File To Device
   Future<bool> saveFile(String url, String fileName) async {
     Directory directory;
     try {
+      // Request Permission For Storage
       if (await _requestPermission(Permission.storage)) {
         directory = (await getExternalStorageDirectory())!;
-        print(directory.path);
       } else {
         return false;
       }
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
+      // If Exists Save file as Zipped File
       if (await directory.exists()) {
         zippedFile = File("${directory.path}/$fileName");
+        // Then Start Downloading
         await dio.download(
           url,
           zippedFile!.path,
           onReceiveProgress: (count, total) {
             setState(() {
+              // Show Progress
               downloadProgress = count / total;
             });
           },
@@ -49,11 +56,12 @@ class _DownloadScreenState extends State<DownloadScreen> {
         return true;
       }
     } catch (e) {
-      print(e);
+      return false;
     }
     return false;
   }
 
+  // Function to request permission
   _requestPermission(Permission permission) async {
     if (await permission.isGranted) {
       return true;
@@ -67,37 +75,41 @@ class _DownloadScreenState extends State<DownloadScreen> {
     }
   }
 
+  // Main Download Function to make Everything in order
+  // Download, Save, Unzip, Proceed
   downloadFile() async {
     setState(() {
+      // Prevent Screen Sleep
       Wakelock.enable();
       loading = true;
     });
 
     bool downloadCompleted = await saveFile(
-        // "https://drive.google.com/uc?export=download&id=19y9l_Mbqfamprg1ALJ6biiIdTO5QRYrK",
-        // "ainshams.zip");
-        "https://www.dropbox.com/s/sxvfmvwqjbrsk4d/paris.zip?dl=1",
+        "https://www.dropbox.com/s/vu4nzg5f9f13x47/paris.zip?dl=1",
         "paris.zip");
     if (downloadCompleted) {
-      print("File Downloaded");
+      showToast(message: "File Downloaded", state: ToastState.SUCCESS);
       setState(() {
-      downloaded = true;
+        downloaded = true;
       });
+      // Start Unzipping (Unarchiving)
       await unarchive(zippedFile);
-      print("Zipped Successfully");
+      showToast(message: "Unarchived Successfully", state: ToastState.SUCCESS);
     } else {
-      print("Problem Downloading The File");
+      showToast(
+          message: "Problem Downloading The File", state: ToastState.ERROR);
     }
 
     setState(() {
       loading = false;
+      // Disable Lock
       Wakelock.disable();
     });
   }
 
+  // Unarchiving Function
   unarchive(zippedFile) async {
     Directory? appDocDirectory = await getExternalStorageDirectory();
-    print(appDocDirectory);
     var bytes = zippedFile.readAsBytesSync();
     var archive = ZipDecoder().decodeBytes(bytes);
     for (final file in archive) {
@@ -114,6 +126,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     setState(() {
       unarchived = true;
     });
+    // Change Status of downloaded to true and save to Cache
     await CacheHelper.saveData(key: 'downloaded', value: true);
     await CacheHelper.saveData(key: 'unarchived', value: true);
   }
@@ -123,6 +136,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     return Center(
       child: Builder(
         builder: (context) {
+          // If didn't Start Download return Button
           if ((loading == false) && (downloaded == false)) {
             return Padding(
               padding: const EdgeInsets.all(20),
@@ -135,7 +149,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             color: Colors.black,
                           ),
-                          textAlign: TextAlign.center,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(
                       height: 10,
@@ -150,17 +164,24 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 ),
               ),
             );
-          } else if ((loading == true) && (downloaded == false)) {
+          }
+          // If Started Downloading Show Progress Indicator
+          else if ((loading == true) && (downloaded == false)) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Downloading",style: TextStyle(
-                    color: primarySwatch,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                  ),),
-                  const SizedBox(height: 15,),
+                  Text(
+                    "Downloading",
+                    style: TextStyle(
+                      color: primarySwatch,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   CircularPercentIndicator(
                     radius: 150,
                     lineWidth: 30,
@@ -180,25 +201,33 @@ class _DownloadScreenState extends State<DownloadScreen> {
               ),
             );
           }
-          else if ((downloaded == true) && (unarchived == false))
-          {
+          // After Finish Downloading Show Unarchiving
+          else if ((downloaded == true) && (unarchived == false)) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Unarchiving",style: TextStyle(
-                    color: primarySwatch,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                  ),),
-                  const SizedBox(height: 15,),
-                  const CircularProgressIndicator(),
+                  Text(
+                    "Unarchiving",
+                    style: TextStyle(
+                      color: primarySwatch,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ConditionalBuilder(
+                    condition: true,
+                    builder: (context) => const CircularProgressIndicator(),
+                    fallback: (context) => Container(),
+                  )
                 ],
               ),
             );
-          }
-          else
-          {
+          } else {
+            // At Last Return Map Screen
             return const MapScreen();
           }
         },

@@ -21,11 +21,13 @@ class _HomeLayoutState extends State<HomeLayout> {
       listener: (context, state) {},
       builder: (context, state) {
         var cubit = AppCubit.get(context);
+        // Tap Bar Controller
         return DefaultTabController(
           length: 3,
           child: Scaffold(
             appBar: AppBar(
               actions: [
+                // Logout, Visibility Menu
                 PopupMenuButton(
                   itemBuilder: (context) => [
                     PopupMenuItem<String>(
@@ -61,6 +63,7 @@ class _HomeLayoutState extends State<HomeLayout> {
                       ),
                     ),
                   ],
+                  // On Click Perform selectedItemAction Function
                   onSelected: (value) =>
                       cubit.selectedItemAction(context, value),
                 )
@@ -76,6 +79,7 @@ class _HomeLayoutState extends State<HomeLayout> {
               },
               ),
             ),
+            // If Item Downloaded Show Screens, Else Show Download Screen
             body: ConditionalBuilder(
               condition: (unarchived && downloaded),
               fallback: (context) => const DownloadScreen(),

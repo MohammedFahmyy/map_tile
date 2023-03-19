@@ -18,8 +18,10 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
+    // Text Field Controller
     var eController = TextEditingController();
     return BlocProvider(
+      // Creatint Bloc
       create: (context) => ForgotPasswordCubit(),
       child: BlocConsumer<ForgotPasswordCubit, ForgotPasswordStates>(
         listener: (context, state) {},
@@ -45,7 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     defaultTextFormField(
                       text: "E-mail Address",
-                      TEController: eController,
+                      tEController: eController,
                       validator: (validator) {
                         return "";
                       },
@@ -57,6 +59,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const SizedBox(
                       height: 20,
                     ),
+                    // Create Progress Indicator 
                     ConditionalBuilder(
                       condition: !cubit.loading,
                       builder: (context) {
@@ -66,6 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           text: "Reset",
                           function: () {
                             cubit.toggleLoading();
+                            // Send Reset Email Then Return to login
                             FirebaseAuth.instance
                                 .sendPasswordResetEmail(email: eController.text)
                                 .then((value) {
@@ -80,7 +84,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   state: ToastState.ERROR);
                                   cubit.toggleLoading();
                             });
-
+                            // Auto Close Keyboard
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                         );

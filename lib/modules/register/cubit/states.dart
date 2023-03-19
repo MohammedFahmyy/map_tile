@@ -1,7 +1,10 @@
+// Register States of Each Event In the Register Screen
+
 abstract class MapRegisterStates {}
 
 class MapRegisterInitialState extends MapRegisterStates {}
 
+// Register in Firebase
 class MapRegisterLoadingState extends MapRegisterStates {}
 
 class MapRegisterSuccessState extends MapRegisterStates {
@@ -16,6 +19,7 @@ class MapRegisterErrorState extends MapRegisterStates {
   MapRegisterErrorState(this.error);
 }
 
+// Create User FireStore Cloud
 class MapCreateUserLoadingState extends MapRegisterStates {}
 
 class MapCreateUserSuccessState extends MapRegisterStates {
@@ -30,6 +34,7 @@ class MapCreateUserErrorState extends MapRegisterStates {
   MapCreateUserErrorState(this.error);
 }
 
+// Load Users To Check Phone Uniqueness
 class MapLoadUserLoadingState extends MapRegisterStates {}
 
 class MapLoadUserSuccessState extends MapRegisterStates {}
@@ -40,6 +45,7 @@ class MapLoadUserErrorState extends MapRegisterStates {
   MapLoadUserErrorState(this.error);
 }
 
+// Check Phone Uniqueness
 class MapCheckPhoneLoadingState extends MapRegisterStates {}
 
 class MapCheckPhoneSuccessState extends MapRegisterStates {}

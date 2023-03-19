@@ -22,6 +22,8 @@ class AppCubit extends Cubit<AppStates> {
 
   bool loadingUsers = true;
   bool loadingLocation = true;
+
+  // Load Users Function
   Future<void> loadUsers() async {
     emit(AppLoadUserLoadingState());
     FirebaseFirestore.instance.collection('users').get().then((value) {
@@ -38,6 +40,7 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  // Get Position Function
   Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -89,6 +92,8 @@ class AppCubit extends Cubit<AppStates> {
   String? uId;
   bool? downloadedT;
   bool? unarchivedT;
+
+  // Get Cached data before application starts
   void cachedData() {
     uId = CacheHelper.getData(key: 'id');
     if (uId != null) {
@@ -106,6 +111,7 @@ class AppCubit extends Cubit<AppStates> {
 
   bool visibility = true;
 
+  // Visibility and Logout Action Determine
   selectedItemAction(context, item) {
     print("ok");
     print(item);
@@ -121,9 +127,11 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
+  // Change Visibility
   changeVisibility() {
     emit(AppChangeVisibilityLoadingState());
     visibility = !visibility;
+    // Update To FireStore
     FirebaseFirestore.instance.collection('users').doc(id).update({
       'visibility': visibility,
     }).then((value) {
@@ -133,26 +141,27 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  // Logout Function
   logOut(context) async {
     id = '';
-    await CacheHelper.removeData(key: 'id');
-    downloaded = true;
-    unarchived = false;
-    await CacheHelper.clearData();
+    await CacheHelper.removeData(key: 'id'); 
     navigateAndFinish(context, LoginScreen());
   }
 
+  // Setup Download Path
   getDirectory() async {
     Directory? appDocDirectory = await getExternalStorageDirectory();
-    path = '${appDocDirectory!.path}/paris/{z}/{x}/{y}.png';
+    path = '${appDocDirectory!.path}/paris1/{z}/{x}/{y}.png';
   }
 
+  // Main Layout Screens
   List<Widget> screens = [
     const MapScreen(),
     const ReportScreen(),
     const ChatScreen(),
   ];
 
+  // Change Page(Map,Report,Chat)
   int pageIndex = 0;
   changePage(value) {
     pageIndex = value;

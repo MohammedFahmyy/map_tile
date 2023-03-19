@@ -1,3 +1,5 @@
+// Class to hold each user Data to access easily
+
 class UserModel
 {
   String? fname;

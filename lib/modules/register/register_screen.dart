@@ -9,29 +9,36 @@ import 'package:map_tile/shared/components/components.dart';
 import 'package:map_tile/shared/styles/colors.dart';
 
 class RegisterScreen extends StatelessWidget {
-  var formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   RegisterScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    // Text Fields Controllers
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
     var password2Controller = TextEditingController();
     var fNameController = TextEditingController();
     var lNameController = TextEditingController();
     var phoneController = TextEditingController();
+    // Register Cubit Creation
     return BlocProvider(
         create: (context) => MapRegisterCubit(),
         child: BlocConsumer<MapRegisterCubit, MapRegisterStates>(
+          // Using the Register Bloc
           listener: (context, state) {
+            // Listen to state
             if (state is MapCreateUserSuccessState) {
+              // In case of success (Show Message and Navigate to Login)
               showToast(
                   message: "Registerd Successfully", state: ToastState.SUCCESS);
               navigateAndFinish(context, LoginScreen());
             }
             if (state is MapRegisterErrorState) {
+              // If error, show error message
               showToast(message: state.error, state: ToastState.ERROR);
             }
+            // Checking if the phone number is unique and create user
             if (state is MapCheckPhoneSuccessState) {
               MapRegisterCubit.get(context).userRegister(
                 fname: fNameController.text,
@@ -41,6 +48,7 @@ class RegisterScreen extends StatelessWidget {
                 password: passwordController.text,
               );
             }
+            // If Phone isn't unique show message
             if (state is MapCheckPhoneErrorState) {
               showToast(message: state.error, state: ToastState.ERROR);
             }
@@ -48,10 +56,12 @@ class RegisterScreen extends StatelessWidget {
           builder: (context, state) {
             return Scaffold(
               body: Center(
+                // Single child scroll view to prevent pixels error while writing
                 child: SingleChildScrollView(
                   child: Container(
                     padding: const EdgeInsets.all(35),
                     width: double.maxFinite,
+                    // Form To Check Validity of fields
                     child: Form(
                       key: formKey,
                       child: Column(
@@ -79,8 +89,9 @@ class RegisterScreen extends StatelessWidget {
                               Flexible(
                                 child: defaultTextFormField(
                                   text: "First Name",
-                                  TEController: fNameController,
+                                  tEController: fNameController,
                                   validator: (value) {
+                                    // Check First name validity
                                     if (value == null || value.isEmpty) {
                                       return "First Name can't be empty";
                                     }
@@ -97,7 +108,8 @@ class RegisterScreen extends StatelessWidget {
                               Flexible(
                                 child: defaultTextFormField(
                                   text: "Last Name",
-                                  TEController: lNameController,
+                                  tEController: lNameController,
+                                  // Check Last name validity
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return "Last Name can't be empty";
@@ -116,9 +128,10 @@ class RegisterScreen extends StatelessWidget {
                           ),
                           defaultTextFormField(
                             text: "E-mail Adress",
-                            TEController: emailController,
+                            tEController: emailController,
                             prefixIcon: const Icon(Icons.email_outlined),
                             validator: (value) {
+                              // Check E-mail validity
                               if (value == null || value.isEmpty) {
                                 return "Email Address can't be empty";
                               }
@@ -147,9 +160,10 @@ class RegisterScreen extends StatelessWidget {
                           defaultTextFormField(
                             prefixIcon: const Icon(Icons.lock_outline),
                             text: "Password",
-                            TEController: passwordController,
+                            tEController: passwordController,
                             isPassword: true,
                             validator: (value) {
+                              // Check Password name validity
                               if (value == null || value.isEmpty) {
                                 return "Password is too short";
                               }
@@ -165,14 +179,14 @@ class RegisterScreen extends StatelessWidget {
                           defaultTextFormField(
                             prefixIcon: const Icon(Icons.lock_outline),
                             text: "Confirm Password",
-                            TEController: password2Controller,
+                            tEController: password2Controller,
                             isPassword: true,
                             validator: (value) {
+                              // Check Password name validity
                               if (value == null || value.isEmpty) {
                                 return "Password is too short";
+                              // Check Passwords are the same
                               } else if (value != passwordController.text) {
-                                print(value);
-                                print(passwordController.text);
                                 return "Passwords don't match";
                               }
                               return null;
@@ -184,6 +198,7 @@ class RegisterScreen extends StatelessWidget {
                           const SizedBox(
                             height: 30,
                           ),
+                          // To Create Loading Indicator while processing
                           ConditionalBuilder(
                             condition:
                                 !MapRegisterCubit.get(context).processing,
@@ -193,10 +208,12 @@ class RegisterScreen extends StatelessWidget {
                                 height: 50,
                                 text: "Register",
                                 function: () {
+                                  // If Everything is Valid, Check If phone is unique
                                   if (formKey.currentState!.validate()) {
                                     MapRegisterCubit.get(context)
                                         .chechPhone(phoneController.text);
                                   }
+                                  // Auto close Keyboard
                                   FocusManager.instance.primaryFocus?.unfocus();
                                 },
                               );

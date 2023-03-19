@@ -1,3 +1,5 @@
+// Login States (Loading,Success,Error)
+
 abstract class MapLoginStates {}
 
 class MapLoginInitialState extends MapLoginStates {}

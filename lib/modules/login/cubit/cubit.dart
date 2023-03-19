@@ -7,24 +7,25 @@ class MapLoginCubit extends Cubit<MapLoginStates> {
 
   static MapLoginCubit get(context) => BlocProvider.of(context);
   bool visiblePassword = true;
-  //MapLoginModel? loginModel;
 
+  // Toggle Password Visibility
   void togglePasswordVisibiltiy()
   {
     visiblePassword = !visiblePassword;
     emit(MapLoginTogglePasswordState());
   }
 
+  // Login With Email & Password
   void userLogin({
     required String email,
     required String password,
   }){
     emit(MapLoginLoadingState());
     FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password).then((value){
-      print(value.user!.uid);
+
       emit(MapLoginSuccessState(value.user!.uid));
     }).catchError((error){
-      print(error.toString());
+
       emit(MapLoginErrorState(error.toString()));
     });
   }

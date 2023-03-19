@@ -8,6 +8,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordStates> {
 
   bool loading = false;
 
+  // Progress Indicator
   toggleLoading(){
     loading = !loading;
     emit(ForgotPasswordToggleLoadingState());

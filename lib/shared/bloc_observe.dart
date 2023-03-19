@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 
+// Just Copied and pasted, Used to observe states of the bloc
+
 class MyBlocObserver extends BlocObserver {
   @override
   void onCreate(BlocBase bloc) {

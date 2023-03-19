@@ -12,40 +12,24 @@ class MapRegisterCubit extends Cubit<MapRegisterStates> {
   bool visiblePassword = true;
   bool processing = false;
 
-  loadUsers() async {
-    emit(MapLoadUserLoadingState());
-    FirebaseFirestore.instance.collection('users').get().then((value) {
-      for (var element in value.docs) {
-        allusers = [];
-        allusers.add(UserModel.fromJson(element.data()));
-        print(element.data());
-      }
-      print(value.docs);
-      emit(MapLoadUserSuccessState());
-    }).catchError((error) {
-      emit(MapLoadUserErrorState(error.toString()));
-      print(error);
-    });
-  }
-
+  // Fuction to Check Phone Uniqueness
   void chechPhone(String phone) async {
     emit(MapCheckPhoneLoadingState());
     processing = true;
     bool unique = true;
+    // Get All Users From Database
     FirebaseFirestore.instance.collection('users').get().then((value) {
+      // Empty List
       allusers = [];
+      // Loop To get Users
       for (var element in value.docs) {
         UserModel temp = UserModel.fromJson(element.data());
         allusers.add(temp);
-        print(temp.phone);
-        print(phone);
+        // Check If Phone Is Reapeated
         if (phone == temp.phone) {
           unique = false;
         }
-        print(element.data());
       }
-      print(unique);
-      print(allusers.length);
       if (unique) {
         emit(MapCheckPhoneSuccessState());
       } else {
@@ -58,6 +42,7 @@ class MapRegisterCubit extends Cubit<MapRegisterStates> {
     });
   }
 
+  // Register User Creadentials
   void userRegister({
     required String email,
     required String password,
@@ -69,7 +54,6 @@ class MapRegisterCubit extends Cubit<MapRegisterStates> {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
-      print(value.user);
       userCreate(
           fname: fname,
           lname: lname,
@@ -79,11 +63,12 @@ class MapRegisterCubit extends Cubit<MapRegisterStates> {
       emit(MapRegisterSuccessState("Success"));
     }).catchError((error) {
       processing = false;
-      print(error.toString());
       emit(MapRegisterErrorState(error.toString()));
     });
   }
 
+  // Add User Info To Database
+  // Note: Default Coordinates are (0,0) and used is visible by default
   void userCreate({
     required String fname,
     required String lname,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Dummy Report Screen
 class ReportScreen extends StatelessWidget {
   const ReportScreen({super.key});
 

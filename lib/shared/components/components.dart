@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+// Components Used more than once during the project
+
+// navigte to another screen
 navigateTo(context, widget) {
   Navigator.push(context, MaterialPageRoute(builder: ((context) => widget)));
 }
 
+// Navigate to another screen without the ability to go back
 navigateAndFinish(context, widget) {
   Navigator.pushAndRemoveUntil(context,
       MaterialPageRoute(builder: ((context) => widget)), (route) => false);
 }
 
+// Custom Button I made
 Widget defaultButton({
   Color background = Colors.blue,
   double height = 40,
@@ -33,24 +38,26 @@ Widget defaultButton({
   );
 }
 
+// Custom defaultTextFormField (Used to collect data)
 Widget defaultTextFormField({
   required String text,
-  required TextEditingController TEController,
+  required TextEditingController tEController,
   required String? Function(String?)? validator,
-  void Function()? TapController,
+  void Function()? tapController,
   void Function()? onSubmit,
   TextInputType? inputType = TextInputType.text,
   Icon? prefixIcon,
   IconButton? suffixIcon,
   bool isPassword = false,
+  // ignore: avoid_types_as_parameter_names, non_constant_identifier_names, use_function_type_syntax_for_parameters
   required void Function()? onChange(String),
 }) {
   return SizedBox(
     width: double.maxFinite,
     child: TextFormField(
       onChanged: onChange,
-      onTap: TapController,
-      controller: TEController,
+      onTap: tapController,
+      controller: tEController,
       keyboardType: inputType,
       validator: validator,
       obscureText: isPassword,
@@ -64,6 +71,7 @@ Widget defaultTextFormField({
   );
 }
 
+// Show message for a certain time (Registerd Successfully, Can't login, Etc)
 void showToast({
   required String message,
   required ToastState state,
@@ -78,6 +86,9 @@ void showToast({
       fontSize: 16.0);
 }
 
+// Toast Colors Based on Condition
+
+// ignore: constant_identifier_names
 enum ToastState { SUCCESS, ERROR, WARNING }
 
 Color chooseToastColor(ToastState state)

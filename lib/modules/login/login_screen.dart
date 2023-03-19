@@ -13,29 +13,32 @@ import '../../shared/constants/constants.dart';
 import '../forgot_password/forgot_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  var formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    // Text Field Controllers
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
+    // Login Bloc Create
     return BlocProvider(
       create: (context) => MapLoginCubit(),
       child: BlocConsumer<MapLoginCubit, MapLoginStates>(
         listener: (context, state) async {
+          // Once The Login Attempt Success
+          // Save id to Cache then Go to Home
           if (state is MapLoginSuccessState) {
             CacheHelper.saveData(
               key: 'id',
               value: state.id,
             ).then((value) {
               if (true) {
-                print(state.id);
                 id = state.id;
                   navigateAndFinish(context, const HomeLayout());
               }
             });
-            print(id);
+            // In Case Error, Show Error Message
           } else if (state is MapLoginErrorState) {
             showToast(message: state.error, state: ToastState.ERROR);
           }
@@ -45,10 +48,12 @@ class LoginScreen extends StatelessWidget {
             body: Stack(
               children: [
                 Center(
+                  // Single child scroll view to prevent pixels error while writing
                   child: SingleChildScrollView(
                     child: Container(
                       padding: const EdgeInsets.all(35),
                       width: double.maxFinite,
+                      // Form To Check Validity of fields
                       child: Form(
                         key: formKey,
                         child: Column(
@@ -83,9 +88,10 @@ class LoginScreen extends StatelessWidget {
                             ),
                             defaultTextFormField(
                               text: "E-mail Adress",
-                              TEController: emailController,
+                              tEController: emailController,
                               prefixIcon: const Icon(Icons.email_outlined),
                               validator: (value) {
+                                // Check E-mail validity
                                 if (value == null || value.isEmpty) {
                                   return "Email Address can't be empty";
                                 }
@@ -100,6 +106,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             defaultTextFormField(
                               suffixIcon: IconButton(
+                                // Make Password Visible
                                   onPressed: () {
                                     MapLoginCubit.get(context)
                                         .togglePasswordVisibiltiy();
@@ -107,10 +114,11 @@ class LoginScreen extends StatelessWidget {
                                   icon: const Icon(Icons.remove_red_eye)),
                               prefixIcon: const Icon(Icons.lock_outline),
                               text: "Password",
-                              TEController: passwordController,
+                              tEController: passwordController,
                               isPassword:
                                   MapLoginCubit.get(context).visiblePassword,
                               validator: (value) {
+                                // Check Password Validity
                                 if (value == null || value.isEmpty) {
                                   return "Password is too short";
                                 }
@@ -127,6 +135,7 @@ class LoginScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 InkWell(
+                                  // Go to Reset Password
                                   onTap: () {
                                     navigateTo(
                                         context, const ForgotPasswordScreen());
@@ -144,6 +153,7 @@ class LoginScreen extends StatelessWidget {
                             const SizedBox(
                               height: 20,
                             ),
+                            // Create Progress Indicator While processing
                             ConditionalBuilder(
                               condition: state is! MapLoginLoadingState,
                               builder: (context) {
@@ -175,6 +185,7 @@ class LoginScreen extends StatelessWidget {
                                   width: 10,
                                 ),
                                 InkWell(
+                                  // Go to Register Screen
                                   onTap: () {
                                     navigateTo(context, RegisterScreen());
                                   },

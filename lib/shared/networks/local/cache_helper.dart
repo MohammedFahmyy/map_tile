@@ -1,11 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+// CacheHelper is used to handle cache
+
 class CacheHelper {
   static SharedPreferences? sharedPreferences;
+  // Initialize
   static init() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
-
+  // Function to save data in Cache
   static Future<bool> saveData({
     required String key,
     required dynamic value,
@@ -21,18 +24,21 @@ class CacheHelper {
     }
   } 
 
+  // Function to get data from cache
   static dynamic getData({
     required String key,
   }) {
     return sharedPreferences!.get(key);
   }
 
+  // Function to remove data from cache
   static Future<bool> removeData({
     required String key,
   }) async {
       return await sharedPreferences!.remove(key);
   }
 
+  // Function to get data from cache
   static Future<bool> clearData() async {
       return await sharedPreferences!.clear();
   } 

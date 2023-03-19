@@ -18,28 +18,41 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   bool startedtimer = false;
-  @override
 
+  // Create Timer To Repeat Update Location
   Timer? timer;
 
   @override
+
+  // Dispose Timer After Finish
   void dispose() {
     timer!.cancel();
+    // ignore: todo
     // TODO: implement dispose
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
+    // Creating Cubit For the map
+    // The User Location Update is used to update user's location
+    // To Show it on The map
     return BlocProvider(
-      create: (context) => MapCubit()..userLocationUpdate(id: id,context:context),
+      create: (context) =>
+          MapCubit()..userLocationUpdate(id: id, context: context),
       child: BlocConsumer<MapCubit, MapStates>(
         listener: (context, state) {
+          // After Updating User and showing the Map
+          // App Starts a Pereodic Timer To Update Location Every x minutes
           if (state is MapUpdateUserSuccessState) {
+            // Check If timer isn't already started
             if (!startedtimer) {
               timer =
                   Timer.periodic(const Duration(minutes: 5), (Timer t) async {
+                // Check if the User isn't logged in, Do Nothing
                 if (id != '') {
-                  await MapCubit.get(context).userLocationUpdate(id: id,context: context);
+                  await MapCubit.get(context)
+                      .userLocationUpdate(id: id, context: context);
                 }
                 setState(() {
                   startedtimer = true;
@@ -55,30 +68,36 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 Flexible(
                   child: FlutterMap(
+                    // Creating The Map
                     options: MapOptions(
-                      onTap: (tapPosition, point) {
-                        print(point);
-                      },
+                      // Centered with the user location
                       center: LatLng(userLat!, userLng!),
                       minZoom: 14,
                       maxZoom: 18,
-                      swPanBoundary: LatLng(48.815071,2.242373),
-                      nePanBoundary: LatLng(48.882722,2.449689),
+                      // Map Boundaries
+                      swPanBoundary: LatLng(48.870667, 2.214322),
+                      nePanBoundary: LatLng(48.975325, 2.331301),
+                      // Disable Map Rotation
+                      // You Can Enable it by deleting this line, But in my opinion it's annoying :)
                       interactiveFlags:
                           InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      // Default Zoom
                       zoom: 15,
                     ),
+                    // To Control Camera Movment
                     mapController: cubit.mapController,
                     children: [
+                      // Main Tile using the offline path on the Device
                       TileLayer(
                         tileProvider: FileTileProvider(),
                         maxZoom: 18,
-                        urlTemplate:
-                            path,
+                        urlTemplate: path,
                       ),
-                       MarkerLayer(
+                      // Friends' Markers
+                      MarkerLayer(
                         markers: usersMarkers,
                       ),
+                      // My Marker
                       MarkerLayer(
                         markers: myMarker,
                       ),
@@ -87,6 +106,7 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ],
             ),
+            // Location Update on Demand Button
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(
                 bottom: 25,
@@ -95,35 +115,11 @@ class _MapScreenState extends State<MapScreen> {
               child: FloatingActionButton(
                 child: const Icon(Icons.gps_not_fixed_outlined),
                 onPressed: () async {
-            
-                  await cubit.userLocationUpdate(id: id,context: context);
+                  await cubit.userLocationUpdate(id: id, context: context);
                   setState(() {
-                    cubit.mapController.move(LatLng(userLat!,userLng!), 16);
+                    cubit.mapController.move(LatLng(userLat!, userLng!), 16);
                   });
                 },
-                // onPressed: () async {
-                //   Position position = await cubit.determinePosition();
-                //   print(position.latitude);
-                //   print(position.longitude);
-                //   cubit.markers = <Marker>[];
-                //   cubit.markers.add(
-                //     Marker(
-                //       height: 50,
-                //       width: 50,
-                //       point: LatLng(position.latitude, position.longitude),
-                //       builder: (ctx) => IconButton(
-                //         padding: EdgeInsets.zero,
-                //         icon: const Icon(
-                //           Icons.pin_drop,
-                //         ),
-                //         iconSize: 50,
-                //         onPressed: () {
-                //           print("Medoz");
-                //         },
-                //       ),
-                //     ),
-                //   );
-                // },
               ),
             ),
           );
