@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:bloc/bloc.dart';
 
 // Just Copied and pasted, Used to observe states of the bloc
